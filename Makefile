@@ -13,7 +13,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 MLX_DIR = minilibx-linux 
 MLX = $(MLX_DIR)/libmlx.a
 
-SRCS = srcs/main.c \
+SRCS = srcs/main.c 
 
 OBJS = $(SRCS:srcs/%.c=$(OBJ_DIR)/%.o) 
 
@@ -29,7 +29,7 @@ $(NAME): $(OBJS) $(LIBFT) $(MLX)
 	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(MLXFLAGS) -o $(NAME)
 	@echo "$(GREEN) compilation SUCCESSFULL$(RESET)"
 
-$(OBJ_DIR)/%.o: srcs/%.c
+$(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@echo "$(BLUE)Compilation $<...$(RESET)"
 	@$(CC) $(CFLAGS) $(OBJS) $(INCLUDES) -c $< -o $@
