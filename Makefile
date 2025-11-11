@@ -7,10 +7,10 @@ MLXFLAGS = -L./minilibx-linux -lmlx -lXext -lX11 -lm
 
 OBJ_DIR = objs
 
-LIBFT_DIR = libft 
+LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-MLX_DIR = minilibx-linux 
+MLX_DIR = minilibx-linux
 MLX = $(MLX_DIR)/libmlx.a
 
 SRCS = srcs/main.c \
