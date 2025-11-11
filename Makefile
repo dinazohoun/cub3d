@@ -17,8 +17,6 @@ SRCS = srcs/main.c \
 
 OBJS = $(SRCS:srcs/%.c=$(OBJ_DIR)/%.o) 
 
-#OPTION DES MESSAGES EN COULEURS, le @ cache l execution et affiche juste le message
-
 GREEN = \033[0;32m
 RED = \033[0;31m
 BLUE = \033[0;34m
