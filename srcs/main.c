@@ -1,5 +1,24 @@
 #include "cub3d.h"
 
+size_t	ft_countlines(char const *s, char c)
+{
+	int	count;
+
+	if (!*s)
+		return (0);
+	count = 0;
+	while (*s)
+	{
+		while (*s == c)
+			s++;
+		if (*s)
+			count++;
+		while (*s != c && *s)
+			s++;
+	}
+	return (count);
+}
+
 char    *append_and_free(char *fcontent, char *read_buf)
 {
     char    *new_fcontent;
@@ -37,16 +56,30 @@ char    *save_file_content(const char *file)
     return (fcontent);
 }
 
+int init_file_info(t_map *map, const char *file)
+{
+    char    *fcontent;
+
+    fcontent = save_file_content(file);
+    if (!fcontent)
+        return (-1);
+    map->file_info = ft_split(fcontent, '\n');
+    map->file_lines = ft_countlines(fcontent, '\n');
+    free(fcontent);
+    if (!map->file_info)
+        return (-1);
+    return (0);
+}
+
 void	print_arr(t_map *map)
 {
-	for (int i = 0; map->file_info[i]; i++)
+    for (int i = 0; i < map->file_lines; i++)
 		printf("line[%d] : %s\n", i, map->file_info[i]);
 }
 
 int main(int ac, char **av)
 {
     t_map   map;
-    char    *fcontent;
    
     (void) av;
     ft_memset(&map, 0, sizeof(t_map));
@@ -54,13 +87,8 @@ int main(int ac, char **av)
         return (err_msg("wrong number of args"), -1);
     if (is_cub_file(av[1]) == 0)
         return (err_msg("bad file name"), -1);
-    fcontent = save_file_content(av[1]);
-    if (!fcontent)
-        return (-1);
-    map.file_info = ft_split(fcontent, '\n');
-    free(fcontent);
-    if (!map.file_info)
-        return (err_msg("fileinfo: malloc"), -1);
+    if (init_file_info(&map, av[1]) == -1)
+        return (err_msg("file_info init"), -1);
     print_arr(&map);
     // PARSE MAP part (map, fd)
     map.floor_color = create_color(128, 0, 128);
