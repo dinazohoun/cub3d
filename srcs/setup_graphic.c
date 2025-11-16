@@ -1,0 +1,34 @@
+#include "../includes/cub3d.h"
+
+int    close_key_win(int keycode, t_map *map)
+{
+    if (keycode == 65307)
+    {
+        mlx_destroy_window(map->mlx, map->win);
+        exit(0);
+    }
+    return (0);
+}
+
+int     close_cross_win(t_map *map)
+{
+    mlx_destroy_window(map->mlx, map->win);
+    exit(0);
+}
+
+void    setup_graphic(t_map *map)
+{
+    map->mlx = mlx_init();
+    // void *mlx_new_window ( void *mlx_ptr, int size_x, int size_y, char *title );
+    map->win = mlx_new_window(map->mlx, SIZE_X, SIZE_Y, "cub3d");
+    init_buffer(map);
+    // clear window ?
+    map->img = mlx_new_image(map->mlx, SIZE_X, SIZE_Y);
+}
+
+void    handle_events(t_map *map)
+{
+    mlx_hook(map->win, 2, 1L<<0, close_key_win, map);
+    mlx_hook(map->win, 17, 0, close_cross_win, map);
+    mlx_loop(map->mlx);
+}

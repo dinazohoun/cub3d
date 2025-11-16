@@ -1,71 +1,74 @@
-/* for the image we will need to know bpp(bits per pixel info), */
+#include "cub3d.h"
 
-#include <string.h> 
-// strerror, char *strerror(int errnum);
-#include <fcntl.h> 
-// open, int open(const char *pathname, int flags, mode_t mode);
-#include <stdlib.h>
-// exit, void exit(int status);
-#include "libft.h"
-#include <math.h>
-#include <mlx.h>
-#include <stdio.h> 
-#include <unistd.h> 
-//  close, int close(int fd); ssize_t read(int fd, void *buf, size_t count);
-
-# define SIZE_X 1200
-# define SIZE_Y 800
-
-typedef struct  s_map
+char    *append_and_free(char *fcontent, char *read_buf)
 {
-    void    *mlx;
-    void    *win;
-    void    *img;
+    char    *new_fcontent;
+    
+    if (!fcontent)
+        return (ft_strdup(read_buf));
+    new_fcontent = ft_strjoin(fcontent, read_buf);
+    if (!new_fcontent)
+        return (free(fcontent), NULL);
+    free(fcontent);
+    return (new_fcontent);
+}
 
-}   t_map;
-
-/*int	ft_strcmp(char *s1, char *s2)
+char    *save_file_content(const char *file)
 {
-	int	i;
+    int     fd;
+    char    read_buf[4096 + 1];
+    size_t    already_read;
+    char    *fcontent;
+    
+    fcontent = NULL;
+    fd = open(file, O_RDONLY);
+    if (fd == -1)
+        return (err_msg("cannot open file"), NULL);
+    already_read = read(fd, read_buf, 4096);
+    while (already_read > 0)
+    {
+        read_buf[already_read] = '\0';
+        fcontent = append_and_free(fcontent, read_buf);
+        if (!fcontent)
+            return (close(fd), NULL);
+        already_read = read(fd, read_buf, 4096);
+    }
+    close (fd);
+    return (fcontent);
+}
 
-	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0')
-	{
-		i++;
-	}
-	return (s1[i] - s2[i]);
-}*/
-
-void    setup_graphic(t_map *map)
+void	print_arr(t_map *map)
 {
-    map->mlx = mlx_init();
-    // void *mlx_new_window ( void *mlx_ptr, int size_x, int size_y, char *title );
-    map->win = mlx_new_window(map->mlx, SIZE_X, SIZE_Y, "cub3d");
-    // clear window ?
-    map->img = mlx_new_image(map->mlx, SIZE_X, SIZE_Y);
-
+	for (int i = 0; map->file_info[i]; i++)
+		printf("line[%d] : %s\n", i, map->file_info[i]);
 }
 
 int main(int ac, char **av)
 {
     t_map   map;
-    //int     fd;
+    char    *fcontent;
    
     (void) av;
+    ft_memset(&map, 0, sizeof(t_map));
     if (ac != 2)
-        return (strerror(5), -1);
-    /*    // open file .cub
-    if (av[1])
-    { 
-        if (ft_strcmp(av[1], ".cub") != 0)
-            return (strerror(5), -1);
-        fd = open(av[1], O_RDONLY);
-        if (fd == -1)
-            return (strerror(9), -1);
-    }*/
+        return (err_msg("wrong number of args"), -1);
+    if (is_cub_file(av[1]) == 0)
+        return (err_msg("bad file name"), -1);
+    fcontent = save_file_content(av[1]);
+    if (!fcontent)
+        return (-1);
+    map.file_info = ft_split(fcontent, '\n');
+    free(fcontent);
+    if (!map.file_info)
+        return (err_msg("fileinfo: malloc"), -1);
+    print_arr(&map);
+    // PARSE MAP part (map, fd)
+    map.floor_color = create_color(128, 0, 128);
+	map.ceiling_color = create_color(135, 206, 235); 
     setup_graphic(&map);
-    mlx_loop(map.mlx);
-    // int mlx_loop ( void *mlx_ptr );
-    //close(fd);
+    if (load_all_textures(&map) == -1)
+		return (err_msg("Error to load textures"), -1);
+    test_display_textures(&map);
+    handle_events(&map);
     return (0);
 }
