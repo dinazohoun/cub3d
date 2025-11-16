@@ -44,8 +44,7 @@ typedef struct s_map
 	t_image	tex_east;
 	t_image	tex_west;
 	int		floor_color;
-	int		ceiling_color;
-	
+	int		ceiling_color;	
 }	t_map;
 
 // ================================================================================
@@ -63,24 +62,28 @@ void    handle_events(t_map *map);
 // 							UTILS
 // ================================================================================
 
-/*****************************UTILS_ARGS_VERIF****************************************/
+/*****************************UTILS_ARGS_VERIF***************************************/
 void    err_msg(char *msg);
 int 	is_cub_file(const char *file);
 
+/*****************************UTILS_EXIT*********************************************/
+void    free_and_exit(t_map *map, int status);
 
-/****************************TEXTURES**************************************/
+/*****************************COPY_FILE_CONTENT**************************************/
+int		init_file_info(t_map *map, const char *file);
+
+/****************************TEXTURES************************************************/
 int		load_texture(t_map *map, char *path, t_image *texture);
 int		load_all_textures(t_map *map);
 int		create_color(int r, int g, int b);
 
-/*****************************BUFFER****************************************/
+/*****************************BUFFER************************************************/
 int		init_buffer(t_map *map);
 void	put_pixel_to_buffer(t_image *buffer, int x, int y, int color);
 int		get_pixel_from_texture(t_image *texture, int x, int y);
 void	display_buffer(t_map *map);
 
-
-/****************************POUR  TESTÉ A EFFACER APRES***********************  */
+/****************************POUR  TESTÉ A EFFACER APRES****************************/
 void	test_display_textures(t_map *map);
 
 #endif
