@@ -3,17 +3,14 @@
 int    close_key_win(int keycode, t_map *map)
 {
     if (keycode == 65307)
-    {
-        mlx_destroy_window(map->mlx, map->win);
-        exit(0);
-    }
+        free_and_exit(map, 0);
     return (0);
 }
 
 int     close_cross_win(t_map *map)
 {
-    mlx_destroy_window(map->mlx, map->win);
-    exit(0);
+    free_and_exit(map, 0);
+    return (0);
 }
 
 void    setup_graphic(t_map *map)
