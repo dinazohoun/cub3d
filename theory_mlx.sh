@@ -19,3 +19,4 @@ void *mlx_new_image ( void *mlx_ptr, int width, int height );
 char *mlx_get_data_addr ( void *img_ptr, int *bits_per_pixel, int *size_line, int *endian );
 # mlx_get_data_addr() returns information about the created image, allowing a user to modify it later.
 
+fcontent= "NO ./path_to_the_north_texture\nSO ./path_to_the_south_texture\n...
