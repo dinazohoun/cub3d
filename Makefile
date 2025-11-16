@@ -13,7 +13,10 @@ LIBFT = $(LIBFT_DIR)/libft.a
 MLX_DIR = minilibx-linux
 MLX = $(MLX_DIR)/libmlx.a
 
-SRCS = srcs/main.c \
+SRCS = srcs/main.c srcs/setup_graphic.c srcs/utils/utils_args_verif.c \
+	srcs/render/render_image.c \
+	srcs/load_textures.c \
+	
 
 OBJS = $(SRCS:srcs/%.c=$(OBJ_DIR)/%.o) 
 
