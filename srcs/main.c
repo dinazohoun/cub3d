@@ -1,11 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/01 18:44:49 by dinados-          #+#    #+#             */
+/*   Updated: 2025/12/01 18:46:33 by dinados-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
-// for the tests
-void	print_arr(t_map *map)
-{
-    for (int i = 0; i < map->file_lines; i++)
-		printf("line[%d] : %s\n", i, map->file_info[i]);
-}
 void	print_map(t_map *map)
 {
 	int	y;
@@ -40,7 +46,6 @@ int	parse_file(t_map *map)
 	return (0);
 }
 
-
 int	main(int ac, char **av)
 {
 	t_map	map;
@@ -54,14 +59,13 @@ int	main(int ac, char **av)
 	if (init_file_info(&map, av[1]) == -1)
 		return (err_msg("file_info init"), -1);
 	if (parse_file(&map) == -1)
-		free_and_exit(&map,  1);
+		free_and_exit(&map, 1);
 	if (init_player(&map) == -1)
 		free_and_exit(&map, 1);
 	if (setup_graphic(&map) == -1)
 		free_and_exit(&map, 1);
 	if (load_all_textures(&map) == -1)
 		free_and_exit(&map, 1);
-	//test_display_textures(&map);
 	handle_events(&map);
 	return (0);
 }

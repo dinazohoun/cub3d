@@ -6,7 +6,7 @@
 /*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 07:58:30 by dinados-          #+#    #+#             */
-/*   Updated: 2025/11/30 09:21:34 by dinados-         ###   ########.fr       */
+/*   Updated: 2025/12/01 16:57:57 by dinados-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ int	handle_keypress(int keycode, t_map *map)
 		rotate_left(map);
 	if (keycode == KEY_RIGHT)
 		rotate_right(map);
-/*printf de DEBUG */
 	printf("POSITION: (%.2f, %.2f) | DIR: (%.2f, %.2f) | PLANE: (%.2f, %.2f)\n",
 		map->player.pos_x, map->player.pos_y, map->player.dir_x,
 		map->player.dir_y, map->player.plane_x, map->player.plane_y);

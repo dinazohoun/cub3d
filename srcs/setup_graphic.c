@@ -1,9 +1,21 @@
-#include "../includes/cub3d.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   setup_graphic.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/01 18:44:06 by dinados-          #+#    #+#             */
+/*   Updated: 2025/12/01 18:44:28 by dinados-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int     close_cross_win(t_map *map)
+#include "cub3d.h"
+
+int	close_cross_win(t_map *map)
 {
-    free_and_exit(map, 0);
-    return (0);
+	free_and_exit(map, 0);
+	return (0);
 }
 
 int	setup_graphic(t_map *map)
@@ -23,9 +35,9 @@ int	setup_graphic(t_map *map)
 }
 
 // handle key press a la place de close key win
-void    handle_events(t_map *map)
+void	handle_events(t_map *map)
 {
-    mlx_hook(map->win, 2, 1L<<0, handle_keypress, map);
-    mlx_hook(map->win, 17, 0, close_cross_win, map);
-    mlx_loop(map->mlx);
+	mlx_hook(map->win, 2, 1L << 0, handle_keypress, map);
+	mlx_hook(map->win, 17, 0, close_cross_win, map);
+	mlx_loop(map->mlx);
 }
