@@ -13,14 +13,21 @@ int     close_cross_win(t_map *map)
     return (0);
 }
 
-void    setup_graphic(t_map *map)
+int	setup_graphic(t_map *map)
 {
-    map->mlx = mlx_init();
-    // void *mlx_new_window ( void *mlx_ptr, int size_x, int size_y, char *title );
-    map->win = mlx_new_window(map->mlx, SIZE_X, SIZE_Y, "cub3d");
-    init_buffer(map);
-    // clear window ?
-    map->img = mlx_new_image(map->mlx, SIZE_X, SIZE_Y);
+	map->mlx = mlx_init();
+	if (!map->mlx)
+		return (-1);
+	// void *mlx_new_window ( void *mlx_ptr, int size_x, int size_y, char *title );
+	map->win = mlx_new_window(map->mlx, SIZE_X, SIZE_Y, "cub3d");
+	if (!map->win)
+		return (-1);
+	if (init_buffer(map) == -1)
+		return (-1);
+	map->img = mlx_new_image(map->mlx, SIZE_X, SIZE_Y);
+	if (!map->img)
+		return (-1);
+	return (0);
 }
 
 void    handle_events(t_map *map)
