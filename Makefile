@@ -13,7 +13,9 @@ LIBFT = $(LIBFT_DIR)/libft.a
 MLX_DIR = minilibx-linux
 MLX = $(MLX_DIR)/libmlx.a
 
-SRCS = srcs/main.c srcs/setup_graphic.c srcs/utils/utils_args_verif.c \
+SRCS = srcs/main.c srcs/setup_graphic.c \
+	srcs/utils/utils_args_verif.c \
+	srcs/utils/utils_parse_text_color.c \
 	srcs/render/render_image.c \
 	srcs/load_textures.c \
 	srcs/copy_file_content.c \
@@ -21,7 +23,14 @@ SRCS = srcs/main.c srcs/setup_graphic.c srcs/utils/utils_args_verif.c \
 	srcs/parsing/textures/parse_color.c \
 	srcs/parsing/textures/parse_textures.c \
 	srcs/parsing/map/parse_tex_color.c \
-	srcs/parsing/map/parse_map.c
+	srcs/parsing/map/parse_map.c \
+	srcs/utils/utils_parse_type_def.c \
+	srcs/utils/utils_parse_file.c \
+	srcs/utils/utils_verif_map.c \
+	srcs/player/init_pos.c \
+	srcs/player/player_move.c \
+	srcs/player/player_rot.c \
+	srcs/player/input_handler.c
 
 OBJS = $(SRCS:srcs/%.c=$(OBJ_DIR)/%.o) 
 

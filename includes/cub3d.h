@@ -4,6 +4,7 @@
 # include <string.h> 
 # include <fcntl.h> 
 # include <stdlib.h>
+# include <stddef.h>
 # include "libft.h"
 # include <math.h>
 # include <mlx.h>
@@ -127,7 +128,6 @@ char	*extract_file_path(char *line);
 int		parsed_text_files(char *line, t_text_data *data);
 int		parse_rgb_values(char *line, t_color *color);
 int		parsed_colors(char *line, t_text_data *data);
-int		ckeck_all_elements_parsed(t_text_data *data);
 
 /*****************************PARSE_TEX_COLOR*******************************/
 int		parse_bef_map(char **file_info, t_text_data *data, int *map_start);
@@ -139,6 +139,7 @@ int		parse_map(t_map *map, int map_start);
 // 							PLAYER
 // ================================================================================
 int		init_player(t_map *map);
+void	set_player_speeds(t_player *player);
 void	move_forward(t_map *map);
 void	move_backward(t_map *map);
 void	move_left(t_map *map);
@@ -150,7 +151,7 @@ void	rotate_right(t_map *map);
 /*****************************SETUP_GRAPHIC****************************************/
 int		close_key_win(int keycode, t_map *map);
 int		close_cross_win(t_map *map);
-void	setup_graphic(t_map *map);
+int		setup_graphic(t_map *map);
 void	handle_events(t_map *map);
 
 // ================================================================================
@@ -170,6 +171,7 @@ int		is_cub_file(const char *file);
 
 /*****************************UTILS_EXIT************************************/
 void	*safe_malloc(size_t size);
+void	free_all(t_map *map);
 void	free_and_exit(t_map *map, int status);
 
 /*****************************UTILS_VERIF_MAP*******************************/
