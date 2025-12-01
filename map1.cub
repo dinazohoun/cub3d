@@ -1,5 +1,12 @@
+NO ./srcs/textures/NORTH.xpm
+SO ./srcs/textures/SOUTH.xpm
+WE ./srcs/textures/WEST.xpm
+EA ./srcs/textures/EAST.xpm
+F 220, 100, 31
+C 225, 95, 155
+
 111111
-100101
-101001
-1100N1
+1W0101
+111111
+110001
 111111
