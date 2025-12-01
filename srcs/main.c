@@ -53,9 +53,10 @@ int	main(int ac, char **av)
 		return (err_msg("bad file name"), -1);
 	if (init_file_info(&map, av[1]) == -1)
 		return (err_msg("file_info init"), -1);
-	//print_arr(&map);
 	if (parse_file(&map) == -1)
 		free_and_exit(&map,  1);
+	if (init_player(&map) == -1)
+		free_and_exit(&map, 1);
 	if (setup_graphic(&map) == -1)
 		free_and_exit(&map, 1);
 	if (load_all_textures(&map) == -1)
