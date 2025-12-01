@@ -17,7 +17,11 @@ SRCS = srcs/main.c srcs/setup_graphic.c srcs/utils/utils_args_verif.c \
 	srcs/render/render_image.c \
 	srcs/load_textures.c \
 	srcs/copy_file_content.c \
-	srcs/utils/utils_exit.c
+	srcs/utils/utils_exit.c \
+	srcs/parsing/textures/parse_color.c \
+	srcs/parsing/textures/parse_textures.c \
+	srcs/parsing/map/parse_tex_color.c \
+	srcs/parsing/map/parse_map.c
 
 OBJS = $(SRCS:srcs/%.c=$(OBJ_DIR)/%.o) 
 
