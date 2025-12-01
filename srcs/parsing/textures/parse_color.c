@@ -114,26 +114,3 @@ int	parsed_colors(char *line, t_text_data *data)
 	data->parsed_flags |= flag_bit;
 	return (1);
 }
-
-/*verifie si tout a etait parse correctement, sinon envoi
-un message d 'erreur */
-int	ckeck_all_elements_parsed(t_text_data *data)
-{
-	if (data->parsed_flags != 0x3F)
-	{
-		if (!(data->parsed_flags & FLAG_NORTH))
-			return (err_msg("missing NO texture"), -1);
-		if (!(data->parsed_flags & FLAG_SOUTH))
-			return (err_msg("missing SO texture"), -1);
-		if (!(data->parsed_flags & FLAG_EAST))
-			return (err_msg("missing EA texture"), -1);
-		if (!(data->parsed_flags & FLAG_WEST))
-			return (err_msg("missing WE texture"), -1);
-		if (!(data->parsed_flags & FLAG_F))
-			return (err_msg("missing F color"), -1);
-		if (!(data->parsed_flags & FLAG_C))
-			return (err_msg("missing C color"), -1);
-		return (-1);
-	}
-	return (1);
-}
