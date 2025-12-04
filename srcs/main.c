@@ -6,7 +6,7 @@
 /*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 18:44:49 by dinados-          #+#    #+#             */
-/*   Updated: 2025/12/01 18:46:33 by dinados-         ###   ########.fr       */
+/*   Updated: 2025/12/04 15:14:22 by dinados-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	main(int ac, char **av)
 	if (is_cub_file(av[1]) == 0)
 		return (err_msg("bad file name"), -1);
 	if (init_file_info(&map, av[1]) == -1)
-		return (err_msg("file_info init"), -1);
+		return (-1);
 	if (parse_file(&map) == -1)
 		free_and_exit(&map, 1);
 	if (init_player(&map) == -1)
