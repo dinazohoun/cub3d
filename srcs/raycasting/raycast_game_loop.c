@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raycast_game_loop.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/09 16:05:14 by dinados-          #+#    #+#             */
+/*   Updated: 2025/12/09 16:05:14 by dinados-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
 // obligatiore d'avoir le x qu'on reinitialise dans le loop
@@ -7,7 +19,6 @@ void	redraw_window(t_map *map, int clr)
 	int	x;
 	int	y;
 
-	
 	y = 0;
 	while (y < SIZE_Y)
 	{
@@ -19,7 +30,6 @@ void	redraw_window(t_map *map, int clr)
 		}
 		y++;
 	}
-
 }
 
 void	draw_one_ray(t_map *map, double ray_st[2], double angle, int col)
@@ -33,7 +43,7 @@ void	draw_one_ray(t_map *map, double ray_st[2], double angle, int col)
 	perp_dist = calcul_perpen_distance(ray_st, ray_hit, \
 										angle, map->player.angle);
 	calcul_wall_project(perp_dist, &top_wall, &bottom_wall);
-	draw_vertical_line(map, col, top_wall, bottom_wall, 0x0000FF);
+	draw_vertical_line(map, col, bottom_wall, 0x0000FF);
 }
 
 int	game_loop(t_map *map)
@@ -46,7 +56,7 @@ int	game_loop(t_map *map)
 	redraw_window(map, 0x000000);
 	ray[0] = map->player.pos_x;
 	ray[1] = map->player.pos_y;
-	angle =  map->player.angle - FOV / 2.0;
+	angle = map->player.angle - FOV / 2.0;
 	angle_step = FOV / (double)SIZE_X;
 	i = 0;
 	while (i < SIZE_X)

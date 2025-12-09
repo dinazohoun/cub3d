@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_raycast_untext.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/09 16:01:44 by dinados-          #+#    #+#             */
+/*   Updated: 2025/12/09 16:01:44 by dinados-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
 //simple Euclidian calculation
@@ -21,7 +33,7 @@ double	distance_form(double diffx, double diffy)
 	return (sqrt(diffx * diffx + diffy * diffy));
 }
 
-double	calcul_distance(double	ray_st[2], double ray_hit[2])
+double	calcul_distance(double ray_st[2], double ray_hit[2])
 {
 	double	diffx;
 	double	diffy;

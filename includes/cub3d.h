@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/09 16:14:20 by dinados-          #+#    #+#             */
+/*   Updated: 2025/12/09 16:21:32 by dinados-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CUB3D_H
 # define CUB3D_H
 
@@ -22,8 +34,8 @@
 # define KEY_UP		65362
 # define KEY_DOWN	65364
 
-# define SIZE_X	1200
-# define SIZE_Y	800
+# define SIZE_X	600
+# define SIZE_Y	600
 # define TILE	64
 
 # define TEX_SIZE	20
@@ -40,7 +52,8 @@
 #  define BUFFER_SIZE 1024
 # endif
 
-# define FOV		(3.141592653589793238 / 3.0)
+# define PI		3.141592653589793238
+# define FOV	1.0471975512
 # define RAY_COUNT	60
 # define RAY_STEP	0.05
 
@@ -52,7 +65,7 @@ typedef struct s_gnl_data
 	int		i;
 }	t_gnl_data;
 
-typedef enum	e_line
+typedef enum e_line
 {
 	LINE_EMPTY,
 	LINE_TEX_NO,
@@ -84,7 +97,7 @@ typedef struct s_text_data
 	int			parsed_flags;
 }	t_text_data;
 
-typedef struct	s_image
+typedef struct s_image
 {
 	void	*img;
 	char	*addr;
@@ -136,31 +149,31 @@ typedef struct s_map
 	t_player	player;
 }	t_map;
 
-// ================================================================================
+// =================================================================
 // 							SRCS
-// ================================================================================
+// =================================================================
 char	*get_next_line(int fd);
-// ================================================================================
+// =================================================================
 // 							PARSING
-// ================================================================================
-/**********************PARSE TEXTURES ET COLOR *****************************/
+// =================================================================
+/**********************PARSE TEXTURES ET COLOR *********************/
 char	*extract_file_path(char *line);
 int		parsed_text_files(char *line, t_text_data *data);
 int		parse_rgb_values(char *line, t_color *color);
 int		parsed_colors(char *line, t_text_data *data);
 
-/*****************************PARSE_TEX_COLOR*******************************/
+/*****************************PARSE_TEX_COLOR***********************/
 int		parse_bef_map(char **file_info, t_text_data *data, int *map_start);
 
-/*****************************PARSE_MAP**************************************/
+/*****************************PARSE_MAP******************************/
 int		parse_map(t_map *map, int map_start);
 char	*read_and_copy_file_content(const char *file);
 char	*append_and_free(char *fcontent, char *read_buf);
 int		get_map_size(char **file_info, int map_start, int *h, int *w);
 
-// ================================================================================
+// ===================================================================
 // 							PLAYER
-// ================================================================================
+// ===================================================================
 int		init_player(t_map *map);
 void	set_player_speeds(t_player *player);
 void	move_forward(t_map *map);
@@ -171,18 +184,18 @@ int		handle_keypress(int keycode, t_map *map);
 void	rotate_left(t_map *map);
 void	rotate_right(t_map *map);
 
-/*****************************SETUP_GRAPHIC****************************************/
+/*****************************SETUP_GRAPHIC****************************/
 int		close_cross_win(t_map *map);
 int		setup_graphic(t_map *map);
 void	handle_events(t_map *map);
 
-// ================================================================================
+// ====================================================================
 // 							UTILS
-// ================================================================================
-/*****************************UTILS_RAYCAST*************************/
+// ====================================================================
+/*****************************UTILS_RAYCAST********************************/
 int		touch_wall(t_map *map, double x, double y);
 double	distance_form(double diffx, double diffy);
-double	calcul_distance(double	ray_st[2], double ray_hit[2]);
+double	calcul_distance(double ray_st[2], double ray_hit[2]);
 
 /*****************************UTILS_PARSE_FILE******************************/
 void	free_textures(t_text_data *data);
@@ -192,7 +205,7 @@ void	cpy_texcol_to_map(t_map *map, t_text_data *data);
 char	*skip_whitespaces(char *str);
 int		file_exists(char *path);
 
-/*****************************UTILS_ARGS_VERIF***************************************/
+/*****************************UTILS_ARGS_VERIF******************************/
 void	err_msg(char *msg);
 int		is_cub_file(const char *file);
 
@@ -212,32 +225,31 @@ int		is_map_char(char c);
 int		is_map_line(char *line);
 t_line	find_line_type(char *line);
 
-/*****************************COPY_FILE_CONTENT**************************************/
+/*****************************COPY_FILE_CONTENT****************************/
 int		init_file_info(t_map *map, const char *file);
 
-/****************************TEXTURES************************************************/
+/****************************TEXTURES***************************************/
 int		load_texture(t_map *map, char *path, t_image *texture);
 int		load_all_textures(t_map *map);
 int		create_color(int r, int g, int b);
 
-/*****************************BUFFER************************************************/
+/*****************************BUFFER****************************************/
 int		init_buffer(t_map *map);
 void	put_pixel_to_buffer(t_image *buffer, int x, int y, int color);
 int		get_pixel_from_texture(t_image *texture, int x, int y);
 void	display_buffer(t_map *map);
 
-/*****************************RAYCAST_DRAW_LOOP************************************************/
+/*****************************RAYCAST_DRAW_LOOP*****************************/
 void	redraw_window(t_map *map, int clr);
 void	draw_one_ray(t_map *map, double ray_st[2], double angle, int col);
 int		game_loop(t_map *map);
 
-/*****************************RAYCAST_DRAW_RAY*******************************************/
+/*****************************RAYCAST_DRAW_RAY******************************/
 void	cast_ray(t_map *map, double ray_st[2], double angle, \
 				double ray_hit[2]);
 double	calcul_perpen_distance(double ray_st[2], double ray_hit[2], \
 							double ray_angle, double player_angle);
 void	calcul_wall_project(double perp_dist, int *top_wall, int *bottom_wall);
-void	draw_vertical_line(t_map *map, int col, int top_wall, \
-							int bottom_wall, int clr);
+void	draw_vertical_line(t_map *map, int col, int bottom_wall, int clr);
 
 #endif
