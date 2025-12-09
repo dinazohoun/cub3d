@@ -38,6 +38,7 @@ int	setup_graphic(t_map *map)
 void	handle_events(t_map *map)
 {
 	mlx_hook(map->win, 2, 1L << 0, handle_keypress, map);
+	mlx_loop_hook(map->mlx, game_loop, map);
 	mlx_hook(map->win, 17, 0, close_cross_win, map);
 	mlx_loop(map->mlx);
 }
