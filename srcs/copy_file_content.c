@@ -34,7 +34,6 @@ size_t	ft_countlines(char const *s, char c)
 char	*append_and_free(char *fcontent, char *read_buf)
 {
 	char	*new_fcontent;
-
 	if (!fcontent)
 		return (ft_strdup(read_buf));
 	new_fcontent = ft_strjoin(fcontent, read_buf);
@@ -54,7 +53,6 @@ char	*read_and_copy_file_content(const char *file)
 	char	read_buf[4096 + 1];
 	size_t	already_read;
 	char	*fcontent;
-
 	fcontent = NULL;
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
