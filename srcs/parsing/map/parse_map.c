@@ -6,38 +6,11 @@
 /*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 10:24:05 by dinados-          #+#    #+#             */
-/*   Updated: 2025/11/25 10:36:07 by dinados-         ###   ########.fr       */
+/*   Updated: 2025/12/08 10:47:52 by dinados-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
-int	get_map_size(char **file_info, int map_start, int *h, int *w)
-{
-	int	i;
-	int	last_h;
-	int	last_w;
-	int	cur_w;
-
-	i = map_start;
-	last_h = 0;
-	last_w = 0;
-	while (file_info[i] != NULL)
-	{
-		if (find_line_type(file_info[i]) != LINE_MAP)
-			return (err_msg("Invalid line after start of map"), -1);
-		last_h++;
-		cur_w = ft_strlen(file_info[i]);
-		if (cur_w > last_w)
-			last_w = cur_w;
-		i++;
-	}
-	if (last_h == 0)
-		return (err_msg("No map"), -1);
-	*h = last_h;
-	*w = last_w;
-	return (0);
-}
 
 int	alloc_map_arr(t_map *map, int h, int w)
 {

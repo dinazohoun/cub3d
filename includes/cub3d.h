@@ -24,8 +24,9 @@
 
 # define SIZE_X	1200
 # define SIZE_Y	800
+# define TILE	64
 
-# define TEX_SIZE	64
+# define TEX_SIZE	20
 
 # define FLAG_NORTH	1
 # define FLAG_SOUTH	2
@@ -33,8 +34,23 @@
 # define FLAG_WEST	8
 # define FLAG_F		16
 # define FLAG_C		32
-# define ALL_FLAGS	(FLAG_NORTH | FLAG_SOUTH | FLAG_EAST | \
-					FLAG_WEST | FLAG_F | FLAG_C)
+# define ALL_FLAGS	63
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1024
+# endif
+
+# define FOV		(3.141592653589793238 / 3.0)
+# define RAY_COUNT	60
+# define RAY_STEP	0.05
+
+typedef struct s_gnl_data
+{
+	char	*line;
+	int		len;
+	int		capacity;
+	int		i;
+}	t_gnl_data;
 
 typedef enum	e_line
 {
@@ -87,10 +103,13 @@ typedef struct s_player
 	double	pos_y;
 	double	dir_x;
 	double	dir_y;
+	double	angle;
 	double	plane_x;
 	double	plane_y;
 	double	rot_speed;
 	double	move_speed;
+	int		recen_x;
+	int		recen_y;
 }	t_player;
 
 typedef struct s_map
@@ -120,6 +139,7 @@ typedef struct s_map
 // ================================================================================
 // 							SRCS
 // ================================================================================
+char	*get_next_line(int fd);
 // ================================================================================
 // 							PARSING
 // ================================================================================
@@ -134,6 +154,9 @@ int		parse_bef_map(char **file_info, t_text_data *data, int *map_start);
 
 /*****************************PARSE_MAP**************************************/
 int		parse_map(t_map *map, int map_start);
+char	*read_and_copy_file_content(const char *file);
+char	*append_and_free(char *fcontent, char *read_buf);
+int		get_map_size(char **file_info, int map_start, int *h, int *w);
 
 // ================================================================================
 // 							PLAYER
@@ -149,7 +172,6 @@ void	rotate_left(t_map *map);
 void	rotate_right(t_map *map);
 
 /*****************************SETUP_GRAPHIC****************************************/
-int		close_key_win(int keycode, t_map *map);
 int		close_cross_win(t_map *map);
 int		setup_graphic(t_map *map);
 void	handle_events(t_map *map);
@@ -157,6 +179,11 @@ void	handle_events(t_map *map);
 // ================================================================================
 // 							UTILS
 // ================================================================================
+/*****************************UTILS_RAYCAST*************************/
+int		touch_wall(t_map *map, double x, double y);
+double	distance_form(double diffx, double diffy);
+double	calcul_distance(double	ray_st[2], double ray_hit[2]);
+
 /*****************************UTILS_PARSE_FILE******************************/
 void	free_textures(t_text_data *data);
 void	cpy_texcol_to_map(t_map *map, t_text_data *data);
@@ -199,7 +226,18 @@ void	put_pixel_to_buffer(t_image *buffer, int x, int y, int color);
 int		get_pixel_from_texture(t_image *texture, int x, int y);
 void	display_buffer(t_map *map);
 
-/****************************POUR  TESTÉ A EFFACER APRES****************************/
-void	test_display_textures(t_map *map);
+/*****************************RAYCAST_DRAW_LOOP************************************************/
+void	redraw_window(t_map *map, int clr);
+void	draw_one_ray(t_map *map, double ray_st[2], double angle, int col);
+int		game_loop(t_map *map);
+
+/*****************************RAYCAST_DRAW_RAY*******************************************/
+void	cast_ray(t_map *map, double ray_st[2], double angle, \
+				double ray_hit[2]);
+double	calcul_perpen_distance(double ray_st[2], double ray_hit[2], \
+							double ray_angle, double player_angle);
+void	calcul_wall_project(double perp_dist, int *top_wall, int *bottom_wall);
+void	draw_vertical_line(t_map *map, int col, int top_wall, \
+							int bottom_wall, int clr);
 
 #endif
