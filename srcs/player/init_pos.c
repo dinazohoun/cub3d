@@ -47,17 +47,11 @@ static void	direction_nord_south(t_player *player, char orientation)
 {
 	if (orientation == 'N')
 	{
-		player->dir_x = 0.0;
-		player->dir_y = -1.0;
-		player->plane_x = -0.66;
-		player->plane_y = 0.0;
+		player->angle = -3.14 / 2;
 	}
 	else if (orientation == 'S')
 	{
-		player->dir_x = 0.0;
-		player->dir_y = 1.0;
-		player->plane_x = -0.66;
-		player->plane_y = 0.0;
+		player->angle = 3.14 / 2;
 	}
 }
 
@@ -65,17 +59,11 @@ static void	direction_east_west(t_player *player, char orientation)
 {
 	if (orientation == 'E')
 	{
-		player->dir_x = 1.0;
-		player->dir_y = 0.0;
-		player->plane_x = 0.0;
-		player->plane_y = 0.66;
+		player->angle = 0;
 	}
 	else if (orientation == 'W')
 	{
-		player->dir_x = -1.0;
-		player->dir_y = 0.0;
-		player->plane_x = 0.0;
-		player->plane_y = -0.66;
+		player->angle = 3.14;
 	}
 }
 
@@ -83,6 +71,8 @@ void	set_player_direction(t_player *player, char orientation)
 {
 	direction_nord_south(player, orientation);
 	direction_east_west(player, orientation);
+	player->dir_x = cos(player->angle);
+	player->dir_y = sin(player->angle);
 }
 
 int	init_player(t_map *map)
@@ -98,6 +88,8 @@ int	init_player(t_map *map)
 	map->player.pos_y = (double)player_y + 0.5;
 	set_player_direction(&map->player, orientation);
 	set_player_speeds(&map->player);
+	map->player.recen_x = (SIZE_X - map->map_w * TILE) / 2;
+	map->player.recen_y = (SIZE_Y - map->map_h * TILE) / 2;
 	printf("Player initialized:\n");
 	printf("   Position: (%.2f, %.2f)\n", map->player.pos_x, map->player.pos_y);
 	printf("   Direction: (%.2f, %.2f)\n", map->player.dir_x, map->player.dir_y);
