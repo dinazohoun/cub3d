@@ -17,6 +17,7 @@ SRCS = srcs/main.c srcs/setup_graphic.c \
 	srcs/utils/utils_args_verif.c \
 	srcs/utils/utils_parse_text_color.c \
 	srcs/render/render_image.c \
+	srcs/render/render_textures.c \
 	srcs/load_textures.c \
 	srcs/copy_file_content.c \
 	srcs/utils/utils_exit.c \
@@ -35,7 +36,7 @@ SRCS = srcs/main.c srcs/setup_graphic.c \
 	srcs/gnl.c \
 	srcs/utils/utils_raycast_untext.c \
 	srcs/raycasting/raycast_draw_ray.c \
-	srcs/raycasting/raycast_game_loop.c
+	srcs/raycasting/raycast_game_loop.c \
 
 OBJS = $(SRCS:srcs/%.c=$(OBJ_DIR)/%.o) 
 

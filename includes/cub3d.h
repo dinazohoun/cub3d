@@ -6,7 +6,7 @@
 /*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 16:14:20 by dinados-          #+#    #+#             */
-/*   Updated: 2025/12/09 16:21:32 by dinados-         ###   ########.fr       */
+/*   Updated: 2025/12/09 18:08:19 by dinados-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@
 
 # define PI		3.141592653589793238
 # define FOV	1.0471975512
-# define RAY_COUNT	60
+# define RAY_COUNT	10
 # define RAY_STEP	0.05
 
 typedef struct s_gnl_data
