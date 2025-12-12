@@ -35,15 +35,18 @@ double	calcul_perpen_distance(double ray_st[2], double ray_hit[2], \
 	return (perp_dist);
 }
 
-void	calcul_wall_project(double perp_dist, int *top_wall, int *bottom_wall)
+int	calcul_wall_project(double perp_dist, int *top_wall, int *bottom_wall)
 {
 	double	proj_plane;
 	double	height;
+	int		line_height;
 
 	proj_plane = (SIZE_X / 2.0) / (tan(FOV / 2.0));
 	height = proj_plane / perp_dist;
+	line_height = (int)height;
 	*top_wall = (int)(SIZE_Y / 2.0 - height / 2.0);
 	*bottom_wall = (int)(SIZE_Y / 2.0 + height / 2.0);
+	return (line_height);
 }
 
 void	draw_vertical_line(t_map *map, int col, int bottom_wall, int clr)

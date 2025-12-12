@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_pos.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zohoun <zohoun@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 11:32:04 by dinados-          #+#    #+#             */
-/*   Updated: 2025/11/30 09:21:24 by dinados-         ###   ########.fr       */
+/*   Updated: 2025/12/11 14:31:43 by zohoun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ void	set_player_direction(t_player *player, char orientation)
 	direction_east_west(player, orientation);
 	player->dir_x = cos(player->angle);
 	player->dir_y = sin(player->angle);
+	player->plane_x = -player->dir_y * 0.66;
+	player->plane_y = player->dir_x * 0.66;
 }
 
 int	init_player(t_map *map)

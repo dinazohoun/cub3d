@@ -1,0 +1,328 @@
+/* ************************************************************************** */
+/*                          DDA ALGORITHM - EXPLIQUÉ                          */
+/*                     Raycasting pour cub3D (Wolfenstein)                    */
+/* ************************************************************************** */
+
+#include "cub3d.h"
+
+/*
+** ÉTAPE 1 : Initialisation du rayon
+** 
+** Pour chaque colonne X de l'écran (0 à largeur_écran), on calcule :
+** - La direction du rayon
+** - Les distances entre les intersections de la grille
+*/
+
+typedef struct s_dda
+{
+	// Position actuelle dans la grille
+	int		map_x;
+	int		map_y;
+	
+	// Direction du rayon (normalisée)
+	double	ray_dir_x;
+	double	ray_dir_y;
+	
+	// Distance entre deux intersections verticales (axe X)
+	double	delta_dist_x;
+	
+	// Distance entre deux intersections horizontales (axe Y)
+	double	delta_dist_y;
+	
+	// Distance depuis le joueur jusqu'à la prochaine intersection X
+	double	side_dist_x;
+	
+	// Distance depuis le joueur jusqu'à la prochaine intersection Y
+	double	side_dist_y;
+	
+	// Direction du pas : -1 (gauche/haut) ou +1 (droite/bas)
+	int		step_x;
+	int		step_y;
+	
+	// Quel côté du mur a été touché : 0 = vertical (N-S), 1 = horizontal (E-O)
+	int		side;
+	
+	// Distance perpendiculaire au mur (évite l'effet fisheye)
+	double	perp_wall_dist;
+	
+	// Mur touché ou pas
+	int		hit;
+}	t_dda;
+
+/*
+** ÉTAPE 2 : Calcul de la direction du rayon
+** 
+** Pour la colonne X de l'écran :
+** camera_x varie de -1 (gauche) à +1 (droite)
+** 
+** Exemple :
+** - Écran 1280 pixels de large
+** - Colonne 0     → camera_x = -1  (extrême gauche)
+** - Colonne 640   → camera_x = 0   (centre)
+** - Colonne 1280  → camera_x = +1  (extrême droite)
+*/
+static void	init_ray_direction(t_map *map, t_dda *dda, int screen_x)
+{
+	double	camera_x;
+	
+	// Convertit la position X de l'écran en position sur le plan caméra
+	camera_x = 2.0 * screen_x / (double)map->win_width - 1.0;
+	
+	// Direction du rayon = direction joueur + plan caméra * camera_x
+	dda->ray_dir_x = map->player.dir_x + map->player.plane_x * camera_x;
+	dda->ray_dir_y = map->player.dir_y + map->player.plane_y * camera_x;
+	
+	/*
+	** Exemple concret :
+	** 
+	** Joueur regarde vers le Nord (0, -1)
+	** Plan caméra : (0.66, 0) perpendiculaire à la direction
+	** 
+	** Colonne centre (camera_x = 0) :
+	**   ray = (0, -1) + (0.66, 0) * 0 = (0, -1)  ← Tout droit
+	** 
+	** Colonne gauche (camera_x = -1) :
+	**   ray = (0, -1) + (0.66, 0) * -1 = (-0.66, -1)  ← Vers la gauche
+	** 
+	** Colonne droite (camera_x = +1) :
+	**   ray = (0, -1) + (0.66, 0) * 1 = (0.66, -1)  ← Vers la droite
+	*/
+}
+
+/*
+** ÉTAPE 3 : Calcul des distances delta
+** 
+** delta_dist = distance que le rayon parcourt pour passer d'une ligne/colonne
+**              de la grille à la suivante
+** 
+** C'est le théorème de Pythagore appliqué :
+** Si le rayon avance de 1 sur X, combien avance-t-il au total ?
+*/
+static void	calculate_delta_distances(t_dda *dda)
+{
+	// Distance pour traverser une case sur l'axe X
+	if (dda->ray_dir_x == 0)
+		dda->delta_dist_x = 1e30;  // Infini si le rayon est vertical
+	else
+		dda->delta_dist_x = fabs(1.0 / dda->ray_dir_x);
+	
+	// Distance pour traverser une case sur l'axe Y
+	if (dda->ray_dir_y == 0)
+		dda->delta_dist_y = 1e30;  // Infini si le rayon est horizontal
+	else
+		dda->delta_dist_y = fabs(1.0 / dda->ray_dir_y);
+	
+	/*
+	** Exemple visuel :
+	** 
+	** Rayon avec direction (0.8, 0.6) :
+	** 
+	**    │     │     │
+	**  ──┼─────┼─────┼──
+	**    │    /│    /│
+	**  ──┼───/─┼───/─┼──  ← Le rayon traverse les lignes
+	**    │  /  │  /  │
+	**  ──┼─/───┼─/───┼──
+	**    │/    │/    │
+	** 
+	** delta_dist_x = distance entre deux intersections verticales
+	** delta_dist_y = distance entre deux intersections horizontales
+	*/
+}
+
+/*
+** ÉTAPE 4 : Calcul des distances initiales
+** 
+** side_dist = distance depuis la position du joueur jusqu'à 
+**             la PROCHAINE ligne/colonne de la grille
+*/
+static void	calculate_initial_side_distances(t_map *map, t_dda *dda)
+{
+	// Position de départ dans la grille
+	dda->map_x = (int)map->player.pos_x;
+	dda->map_y = (int)map->player.pos_y;
+	
+	// Direction du rayon vers la droite ou la gauche ?
+	if (dda->ray_dir_x < 0)
+	{
+		dda->step_x = -1;  // On va vers la gauche
+		// Distance jusqu'au bord gauche de la case actuelle
+		dda->side_dist_x = (map->player.pos_x - dda->map_x) * dda->delta_dist_x;
+	}
+	else
+	{
+		dda->step_x = 1;   // On va vers la droite
+		// Distance jusqu'au bord droit de la case actuelle
+		dda->side_dist_x = (dda->map_x + 1.0 - map->player.pos_x) * dda->delta_dist_x;
+	}
+	
+	// Direction du rayon vers le haut ou le bas ?
+	if (dda->ray_dir_y < 0)
+	{
+		dda->step_y = -1;  // On va vers le haut
+		dda->side_dist_y = (map->player.pos_y - dda->map_y) * dda->delta_dist_y;
+	}
+	else
+	{
+		dda->step_y = 1;   // On va vers le bas
+		dda->side_dist_y = (dda->map_y + 1.0 - map->player.pos_y) * dda->delta_dist_y;
+	}
+	
+	/*
+	** Exemple :
+	** 
+	** Joueur en (5.7, 5.3)
+	** Case actuelle : [5][5]
+	** 
+	**     5.0       6.0
+	**      ┌─────────┐
+	**  5.0 │    ●    │  ← Joueur en 5.7, 5.3
+	**      │   /     │
+	**      │  /      │
+	**  6.0 └─────────┘
+	** 
+	** Si ray_dir_x > 0 (va vers la droite) :
+	**   side_dist_x = (6.0 - 5.7) * delta_dist_x = 0.3 * delta_dist_x
+	** 
+	** Si ray_dir_y > 0 (va vers le bas) :
+	**   side_dist_y = (6.0 - 5.3) * delta_dist_y = 0.7 * delta_dist_y
+	*/
+}
+
+/*
+** ÉTAPE 5 : L'algorithme DDA principal
+** 
+** On avance case par case en choisissant toujours la plus petite distance
+*/
+static void	perform_dda_loop(t_map *map, t_dda *dda)
+{
+	dda->hit = 0;
+	
+	while (dda->hit == 0)
+	{
+		// Compare les deux distances : laquelle est la plus proche ?
+		if (dda->side_dist_x < dda->side_dist_y)
+		{
+			// L'intersection X est plus proche
+			dda->side_dist_x += dda->delta_dist_x;  // Avance d'une case sur X
+			dda->map_x += dda->step_x;              // Déplace dans la grille
+			dda->side = 0;                          // Mur vertical touché
+		}
+		else
+		{
+			// L'intersection Y est plus proche
+			dda->side_dist_y += dda->delta_dist_y;  // Avance d'une case sur Y
+			dda->map_y += dda->step_y;              // Déplace dans la grille
+			dda->side = 1;                          // Mur horizontal touché
+		}
+		
+		// Vérifie si on a touché un mur
+		if (dda->map_x < 0 || dda->map_x >= map->map_width ||
+			dda->map_y < 0 || dda->map_y >= map->map_height)
+			dda->hit = 1;  // Sorti de la map
+		else if (map->grid[dda->map_y][dda->map_x] == '1')
+			dda->hit = 1;  // Mur trouvé !
+	}
+	
+	/*
+	** Visualisation de la boucle :
+	** 
+	** Itération 1 :  side_dist_x = 0.3   side_dist_y = 0.7
+	**                → Choisit X, avance sur X
+	** 
+	** Itération 2 :  side_dist_x = 1.5   side_dist_y = 0.7
+	**                → Choisit Y, avance sur Y
+	** 
+	** Itération 3 :  side_dist_x = 1.5   side_dist_y = 1.9
+	**                → Choisit X, avance sur X
+	** 
+	** ... jusqu'à toucher un mur ('1')
+	*/
+}
+
+/*
+** ÉTAPE 6 : Calcul de la distance perpendiculaire
+** 
+** IMPORTANT : On ne prend PAS la distance euclidienne directe !
+** Sinon on a un effet "fisheye" (distorsion en barillet)
+*/
+static void	calculate_perpendicular_distance(t_map *map, t_dda *dda)
+{
+	if (dda->side == 0)
+	{
+		// Mur vertical (Nord-Sud)
+		dda->perp_wall_dist = (dda->map_x - map->player.pos_x 
+			+ (1 - dda->step_x) / 2) / dda->ray_dir_x;
+	}
+	else
+	{
+		// Mur horizontal (Est-Ouest)
+		dda->perp_wall_dist = (dda->map_y - map->player.pos_y 
+			+ (1 - dda->step_y) / 2) / dda->ray_dir_y;
+	}
+	
+	/*
+	** Pourquoi perpendiculaire ?
+	** 
+	** Sans correction (distance euclidienne) :
+	**         /│\
+	**        / │ \      ← Les rayons des bords sont plus longs
+	**       /  │  \     ← Les murs paraissent courbés (fisheye)
+	**      ●───┼───     ← Joueur
+	** 
+	** Avec distance perpendiculaire :
+	**         ┌─┐
+	**         │ │       ← Distance mesurée perpendiculairement
+	**         │ │       ← Les murs restent droits
+	**      ●──┼─┼──     ← Joueur
+	** 
+	** C'est la projection de la distance sur la direction du regard
+	*/
+}
+
+/*
+** FONCTION PRINCIPALE : Lance un rayon pour une colonne de l'écran
+*/
+void	cast_ray(t_map *map, int screen_x, t_dda *dda)
+{
+	// 1. Calcule la direction du rayon
+	init_ray_direction(map, dda, screen_x);
+	
+	// 2. Calcule les distances delta
+	calculate_delta_distances(dda);
+	
+	// 3. Calcule les distances initiales
+	calculate_initial_side_distances(map, dda);
+	
+	// 4. Lance le DDA
+	perform_dda_loop(map, dda);
+	
+	// 5. Calcule la distance perpendiculaire
+	calculate_perpendicular_distance(map, dda);
+}
+
+/*
+** UTILISATION DANS LE MOTEUR DE RENDU
+*/
+void	render_3d_view(t_map *map)
+{
+	t_dda	dda;
+	int		x;
+	
+	// Pour chaque colonne de l'écran
+	x = 0;
+	while (x < map->win_width)
+	{
+		// Lance un rayon
+		cast_ray(map, x, &dda);
+		
+		// Utilise les résultats pour dessiner le mur
+		// - dda.perp_wall_dist : pour calculer la hauteur
+		// - dda.side : pour choisir la texture (N/S/E/W)
+		// - dda.map_x, dda.map_y : position du mur touché
+		
+		draw_wall_column(map, x, &dda);
+		
+		x++;
+	}
+}

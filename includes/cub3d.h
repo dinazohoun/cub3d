@@ -6,7 +6,7 @@
 /*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 16:14:20 by dinados-          #+#    #+#             */
-/*   Updated: 2025/12/09 18:08:19 by dinados-         ###   ########.fr       */
+/*   Updated: 2025/12/12 19:27:02 by dinados-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@
 # define KEY_UP		65362
 # define KEY_DOWN	65364
 
-# define SIZE_X	600
-# define SIZE_Y	600
+# define SIZE_X	1200
+# define SIZE_Y	800
 # define TILE	64
 
 # define TEX_SIZE	20
@@ -54,8 +54,36 @@
 
 # define PI		3.141592653589793238
 # define FOV	1.0471975512
-# define RAY_COUNT	10
-# define RAY_STEP	0.05
+# define RAY_COUNT	60
+# define RAY_STEP	0.005
+
+# define NORTH 0
+# define SOUTH 1
+# define EAST  2
+# define WEST  3
+
+/*dessinne un mur texturé*/
+typedef struct s_wall
+{
+	double	wall_x;
+	double	angle;
+	int		side;
+	int		x;
+	int		draw_start;
+	int		draw_end;
+	int		wall_start;
+	int		wall_end;
+	int		line_height;
+}	t_wall;
+
+/*calcules temporaires a l'interieur de draw_textured_wall
+calcule les cordonnes de la texture  */
+typedef struct s_tex_cal
+{
+	int		tex_x;
+	double	step;
+	double	tex_pos;
+}	t_tex_cal;
 
 typedef struct s_gnl_data
 {
@@ -190,6 +218,19 @@ int		setup_graphic(t_map *map);
 void	handle_events(t_map *map);
 
 // ====================================================================
+// 							RENDER
+// ====================================================================
+void	draw_textured_wall(t_map *map, t_wall *wall);
+double	calculate_wall_x(t_map *map, double perp_dist, double angle, int side);
+int		get_wall_side(double angle);
+t_image	*select_texture(t_map *map, int side);
+void	init_tex_calc(t_tex_cal *tex, t_wall *wall, t_image *texture,
+			double angle);
+void	draw_tex_column(t_map *map, t_wall *wall, t_image *tex,
+			t_tex_cal *calc);
+void	draw_background(t_map *map);
+
+// ====================================================================
 // 							UTILS
 // ====================================================================
 /*****************************UTILS_RAYCAST********************************/
@@ -249,7 +290,7 @@ void	cast_ray(t_map *map, double ray_st[2], double angle, \
 				double ray_hit[2]);
 double	calcul_perpen_distance(double ray_st[2], double ray_hit[2], \
 							double ray_angle, double player_angle);
-void	calcul_wall_project(double perp_dist, int *top_wall, int *bottom_wall);
+int		calcul_wall_project(double perp_dist, int *top_wall, int *bottom_wall);
 void	draw_vertical_line(t_map *map, int col, int bottom_wall, int clr);
 
 #endif

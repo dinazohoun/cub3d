@@ -38,12 +38,27 @@ void	draw_one_ray(t_map *map, double ray_st[2], double angle, int col)
 	double	perp_dist;
 	int		top_wall;
 	int		bottom_wall;
+	int		line_height;
+	t_wall	wall;
 
 	cast_ray(map, ray_st, angle, ray_hit);
 	perp_dist = calcul_perpen_distance(ray_st, ray_hit, \
 										angle, map->player.angle);
-	calcul_wall_project(perp_dist, &top_wall, &bottom_wall);
-	draw_vertical_line(map, col, bottom_wall, 0x0000FF);
+	line_height = calcul_wall_project(perp_dist, &top_wall, &bottom_wall);
+	wall.x = col;
+	wall.side = get_wall_side(angle);
+	wall.wall_x = calculate_wall_x(map, perp_dist, angle, wall.side);
+	wall.line_height = line_height;
+	wall.angle = angle;
+	wall.wall_start = top_wall;
+	wall.wall_end = bottom_wall;
+	if (top_wall < 0)
+		top_wall = 0;
+	if (bottom_wall >= SIZE_Y)
+		bottom_wall = SIZE_Y - 1;
+	wall.draw_start = top_wall;
+	wall.draw_end = bottom_wall;
+	draw_textured_wall(map, &wall);
 }
 
 int	game_loop(t_map *map)
@@ -53,7 +68,7 @@ int	game_loop(t_map *map)
 	double	angle_step;
 	int		i;
 
-	redraw_window(map, 0x000000);
+	draw_background(map);
 	ray[0] = map->player.pos_x;
 	ray[1] = map->player.pos_y;
 	angle = map->player.angle - FOV / 2.0;
