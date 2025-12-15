@@ -6,7 +6,7 @@
 /*   By: zohoun <zohoun@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 11:32:04 by dinados-          #+#    #+#             */
-/*   Updated: 2025/12/11 14:31:43 by zohoun           ###   ########.fr       */
+/*   Updated: 2025/12/13 17:46:36 by zohoun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,9 @@ int	init_player(t_map *map)
 	map->player.recen_x = (SIZE_X - map->map_w * TILE) / 2;
 	map->player.recen_y = (SIZE_Y - map->map_h * TILE) / 2;
 	printf("Player initialized:\n");
-	printf("   Position: (%.2f, %.2f)\n", map->player.pos_x, map->player.pos_y);
-	printf("   Direction: (%.2f, %.2f)\n", map->player.dir_x, map->player.dir_y);
-	printf("   plane: (%.2f, %.2f)\n", map->player.plane_x,
+	printf("  Position: (%.2f, %.2f)\n", map->player.pos_x, map->player.pos_y);
+	printf("  Direction: (%.2f, %.2f)\n", map->player.dir_x, map->player.dir_y);
+	printf("  plane: (%.2f, %.2f)\n", map->player.plane_x,
 		map->player.plane_y);
 	printf("   Orientation: %c\n", orientation);
 	return (0);

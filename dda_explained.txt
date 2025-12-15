@@ -24,10 +24,10 @@ typedef struct s_dda
 	double	ray_dir_y;
 	
 	// Distance entre deux intersections verticales (axe X)
-	double	delta_dist_x;
+	double	diff_dist_x;
 	
 	// Distance entre deux intersections horizontales (axe Y)
-	double	delta_dist_y;
+	double	diff_dist_y;
 	
 	// Distance depuis le joueur jusqu'à la prochaine intersection X
 	double	side_dist_x;
@@ -90,27 +90,27 @@ static void	init_ray_direction(t_map *map, t_dda *dda, int screen_x)
 }
 
 /*
-** ÉTAPE 3 : Calcul des distances delta
+** ÉTAPE 3 : Calcul des distances diff
 ** 
-** delta_dist = distance que le rayon parcourt pour passer d'une ligne/colonne
+** diff_dist = distance que le rayon parcourt pour passer d'une ligne/colonne
 **              de la grille à la suivante
 ** 
 ** C'est le théorème de Pythagore appliqué :
 ** Si le rayon avance de 1 sur X, combien avance-t-il au total ?
 */
-static void	calculate_delta_distances(t_dda *dda)
+static void	calculate_diff_distances(t_dda *dda)
 {
 	// Distance pour traverser une case sur l'axe X
 	if (dda->ray_dir_x == 0)
-		dda->delta_dist_x = 1e30;  // Infini si le rayon est vertical
+		dda->diff_dist_x = 1e30;  // Infini si le rayon est vertical
 	else
-		dda->delta_dist_x = fabs(1.0 / dda->ray_dir_x);
+		dda->diff_dist_x = fabs(1.0 / dda->ray_dir_x);
 	
 	// Distance pour traverser une case sur l'axe Y
 	if (dda->ray_dir_y == 0)
-		dda->delta_dist_y = 1e30;  // Infini si le rayon est horizontal
+		dda->diff_dist_y = 1e30;  // Infini si le rayon est horizontal
 	else
-		dda->delta_dist_y = fabs(1.0 / dda->ray_dir_y);
+		dda->diff_dist_y = fabs(1.0 / dda->ray_dir_y);
 	
 	/*
 	** Exemple visuel :
@@ -125,8 +125,8 @@ static void	calculate_delta_distances(t_dda *dda)
 	**  ──┼─/───┼─/───┼──
 	**    │/    │/    │
 	** 
-	** delta_dist_x = distance entre deux intersections verticales
-	** delta_dist_y = distance entre deux intersections horizontales
+	** diff_dist_x = distance entre deux intersections verticales
+	** diff_dist_y = distance entre deux intersections horizontales
 	*/
 }
 
@@ -147,25 +147,25 @@ static void	calculate_initial_side_distances(t_map *map, t_dda *dda)
 	{
 		dda->step_x = -1;  // On va vers la gauche
 		// Distance jusqu'au bord gauche de la case actuelle
-		dda->side_dist_x = (map->player.pos_x - dda->map_x) * dda->delta_dist_x;
+		dda->side_dist_x = (map->player.pos_x - dda->map_x) * dda->diff_dist_x;
 	}
 	else
 	{
 		dda->step_x = 1;   // On va vers la droite
 		// Distance jusqu'au bord droit de la case actuelle
-		dda->side_dist_x = (dda->map_x + 1.0 - map->player.pos_x) * dda->delta_dist_x;
+		dda->side_dist_x = (dda->map_x + 1.0 - map->player.pos_x) * dda->diff_dist_x;
 	}
 	
 	// Direction du rayon vers le haut ou le bas ?
 	if (dda->ray_dir_y < 0)
 	{
 		dda->step_y = -1;  // On va vers le haut
-		dda->side_dist_y = (map->player.pos_y - dda->map_y) * dda->delta_dist_y;
+		dda->side_dist_y = (map->player.pos_y - dda->map_y) * dda->diff_dist_y;
 	}
 	else
 	{
 		dda->step_y = 1;   // On va vers le bas
-		dda->side_dist_y = (dda->map_y + 1.0 - map->player.pos_y) * dda->delta_dist_y;
+		dda->side_dist_y = (dda->map_y + 1.0 - map->player.pos_y) * dda->diff_dist_y;
 	}
 	
 	/*
@@ -182,10 +182,10 @@ static void	calculate_initial_side_distances(t_map *map, t_dda *dda)
 	**  6.0 └─────────┘
 	** 
 	** Si ray_dir_x > 0 (va vers la droite) :
-	**   side_dist_x = (6.0 - 5.7) * delta_dist_x = 0.3 * delta_dist_x
+	**   side_dist_x = (6.0 - 5.7) * diff_dist_x = 0.3 * diff_dist_x
 	** 
 	** Si ray_dir_y > 0 (va vers le bas) :
-	**   side_dist_y = (6.0 - 5.3) * delta_dist_y = 0.7 * delta_dist_y
+	**   side_dist_y = (6.0 - 5.3) * diff_dist_y = 0.7 * diff_dist_y
 	*/
 }
 
@@ -204,14 +204,14 @@ static void	perform_dda_loop(t_map *map, t_dda *dda)
 		if (dda->side_dist_x < dda->side_dist_y)
 		{
 			// L'intersection X est plus proche
-			dda->side_dist_x += dda->delta_dist_x;  // Avance d'une case sur X
+			dda->side_dist_x += dda->diff_dist_x;  // Avance d'une case sur X
 			dda->map_x += dda->step_x;              // Déplace dans la grille
 			dda->side = 0;                          // Mur vertical touché
 		}
 		else
 		{
 			// L'intersection Y est plus proche
-			dda->side_dist_y += dda->delta_dist_y;  // Avance d'une case sur Y
+			dda->side_dist_y += dda->diff_dist_y;  // Avance d'une case sur Y
 			dda->map_y += dda->step_y;              // Déplace dans la grille
 			dda->side = 1;                          // Mur horizontal touché
 		}
@@ -288,8 +288,8 @@ void	cast_ray(t_map *map, int screen_x, t_dda *dda)
 	// 1. Calcule la direction du rayon
 	init_ray_direction(map, dda, screen_x);
 	
-	// 2. Calcule les distances delta
-	calculate_delta_distances(dda);
+	// 2. Calcule les distances diff
+	calculate_diff_distances(dda);
 	
 	// 3. Calcule les distances initiales
 	calculate_initial_side_distances(map, dda);

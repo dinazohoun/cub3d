@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dinados- <dinados-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zohoun <zohoun@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 16:14:20 by dinados-          #+#    #+#             */
-/*   Updated: 2025/12/12 19:27:02 by dinados-         ###   ########.fr       */
+/*   Updated: 2025/12/15 10:38:25 by zohoun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,24 @@
 # define EAST  2
 # define WEST  3
 
+/*
+-Structure pour l'algorithme DDA
+*/
+typedef struct s_dda
+{
+	int		map_x;
+	int		map_y;
+	int		step_x;
+	int		step_y;
+	double	side_dist_x;
+	double	side_dist_y;
+	double	diff_dist_x;
+	double	diff_dist_y;
+	double	dir_y;
+	double	dir_x;
+	int		side;
+}	t_dda;
+
 /*dessinne un mur texturé*/
 typedef struct s_wall
 {
@@ -74,6 +92,8 @@ typedef struct s_wall
 	int		wall_start;
 	int		wall_end;
 	int		line_height;
+	double	ray_start[2];
+	int		dda_side;
 }	t_wall;
 
 /*calcules temporaires a l'interieur de draw_textured_wall
@@ -211,6 +231,7 @@ void	move_right(t_map *map);
 int		handle_keypress(int keycode, t_map *map);
 void	rotate_left(t_map *map);
 void	rotate_right(t_map *map);
+int		is_valid_position(t_map *map, double x, double y);
 
 /*****************************SETUP_GRAPHIC****************************/
 int		close_cross_win(t_map *map);
@@ -292,5 +313,13 @@ double	calcul_perpen_distance(double ray_st[2], double ray_hit[2], \
 							double ray_angle, double player_angle);
 int		calcul_wall_project(double perp_dist, int *top_wall, int *bottom_wall);
 void	draw_vertical_line(t_map *map, int col, int bottom_wall, int clr);
+
+/*****************************RAYCAST_DDA************************************/
+void	cast_ray_dda(t_map *map, double pos[2], double angle, t_dda *dda);
+double	calcul_perpen_distance_dda(t_dda *dda, double pos[2], double dir[2]);
+double	calculate_wall_x_dda(t_dda *dda, double pos[2], double perp_dist,
+			double dir[2]);
+int		get_wall_side_dda(t_dda *dda, double dir[2]);
+void	perform_dda(t_map *map, t_dda *dda);
 
 #endif

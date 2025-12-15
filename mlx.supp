@@ -1,0 +1,15 @@
+{
+   MLX_Uninit_Bytes
+   Memcheck:Param
+   writev(vector[0])
+   fun:writev
+   ...
+   fun:mlx_new_window
+}
+{
+   MLX_X11_Uninit
+   Memcheck:Param
+   writev(vector[0])
+   ...
+   obj:*/libxcb.so*
+}

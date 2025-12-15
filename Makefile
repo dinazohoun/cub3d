@@ -29,11 +29,14 @@ SRCS = srcs/main.c srcs/setup_graphic.c \
 	srcs/utils/utils_parse_type_def.c \
 	srcs/utils/utils_parse_file.c \
 	srcs/utils/utils_verif_map.c \
+	srcs/utils/utils_dda.c \
+	srcs/utils/utils_player_move.c \
 	srcs/player/init_pos.c \
 	srcs/player/player_move.c \
 	srcs/player/player_rot.c \
 	srcs/player/input_handler.c \
 	srcs/gnl.c \
+	srcs/raycasting/raycast_dda.c \
 	srcs/utils/utils_raycast_untext.c \
 	srcs/raycasting/raycast_draw_ray.c \
 	srcs/raycasting/raycast_game_loop.c \

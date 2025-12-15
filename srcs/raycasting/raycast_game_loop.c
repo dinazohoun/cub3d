@@ -12,55 +12,69 @@
 
 #include "cub3d.h"
 
-// obligatiore d'avoir le x qu'on reinitialise dans le loop
-// re colorer tous les pixel d'une fenetre
-void	redraw_window(t_map *map, int clr)
+/*
+- Applique le clipping aux limites de dessin
+- Evite que on sorte des limites definis(pas de bug , pas de crash)
+*/
+static void	apply_clipping(int wall_start, int wall_end, t_wall *wall)
 {
-	int	x;
-	int	y;
-
-	y = 0;
-	while (y < SIZE_Y)
-	{
-		x = 0;
-		while (x < SIZE_X)
-		{
-			put_pixel_to_buffer(&map->buffer, x, y, clr);
-			x++;
-		}
-		y++;
-	}
+	wall->draw_start = wall_start;
+	wall->draw_end = wall_end;
+	if (wall->draw_start < 0)
+		wall->draw_start = 0;
+	if (wall->draw_end >= SIZE_Y)
+		wall->draw_end = SIZE_Y - 1;
 }
 
+/*
+-Cette fonction transforme les données brutes du DDA en
+	informations utilisables pour dessiner le mur
+*/
+static void	setup_wall(t_wall *wall, t_dda *dda, double angle, int col)
+{
+	double	dir[2];
+	double	perp_dist;
+
+	dir[0] = cos(angle);
+	dir[1] = sin(angle);
+	perp_dist = calcul_perpen_distance_dda(dda, wall->ray_start, dir);
+	wall->line_height = calcul_wall_project(perp_dist,
+			&wall->wall_start, &wall->wall_end);
+	wall->x = col;
+	wall->side = get_wall_side_dda(dda, dir);
+	wall->dda_side = dda->side;
+	wall->wall_x = calculate_wall_x_dda(dda, wall->ray_start, perp_dist, dir);
+	wall->angle = angle;
+	apply_clipping(wall->wall_start, wall->wall_end, wall);
+}
+
+/*
+-Lance un rayon avec DDA et dessine le mur texturé correspondant
+-Pour chaque colonne d'écran :
+-1. Calcule la direction du rayon
+-2. Utilise DDA pour trouver le mur touché
+-3. Dessine le mur avec la texture appropriée
+*/
 void	draw_one_ray(t_map *map, double ray_st[2], double angle, int col)
 {
-	double	ray_hit[2];
-	double	perp_dist;
-	int		top_wall;
-	int		bottom_wall;
-	int		line_height;
+	t_dda	dda;
 	t_wall	wall;
 
-	cast_ray(map, ray_st, angle, ray_hit);
-	perp_dist = calcul_perpen_distance(ray_st, ray_hit, \
-										angle, map->player.angle);
-	line_height = calcul_wall_project(perp_dist, &top_wall, &bottom_wall);
-	wall.x = col;
-	wall.side = get_wall_side(angle);
-	wall.wall_x = calculate_wall_x(map, perp_dist, angle, wall.side);
-	wall.line_height = line_height;
-	wall.angle = angle;
-	wall.wall_start = top_wall;
-	wall.wall_end = bottom_wall;
-	if (top_wall < 0)
-		top_wall = 0;
-	if (bottom_wall >= SIZE_Y)
-		bottom_wall = SIZE_Y - 1;
-	wall.draw_start = top_wall;
-	wall.draw_end = bottom_wall;
+	wall.ray_start[0] = ray_st[0];
+	wall.ray_start[1] = ray_st[1];
+	cast_ray_dda(map, ray_st, angle, &dda);
+	setup_wall(&wall, &dda, angle, col);
 	draw_textured_wall(map, &wall);
 }
 
+/*
+Boucle principale de rendu du jeu (raycasting)
+Pour chaque frame :
+	1. dessine le sol et le plafond (fond)
+	2. lance SIZE_X rayons (un par colonne d'écran) du FOV gauche au FOV droit
+	3. Chaque rayon trouve un mur et le dessine avec sa texture
+	4. affiche le buffer final à l'écran
+*/
 int	game_loop(t_map *map)
 {
 	double	ray[2];
