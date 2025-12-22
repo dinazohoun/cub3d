@@ -58,7 +58,7 @@ static int	alloc_file_info(t_map *map, const char *file)
 	count = count_lines(fcontent);
 	free(fcontent);
 	if (count == 0)
-		return (err_msg("empty file"), -1);
+		return (-1);
 	map->file_info = malloc(sizeof(char *) * (count + 1));
 	if (!map->file_info)
 		return (err_msg("malloc failed"), -1);
@@ -105,7 +105,7 @@ int	init_file_info(t_map *map, const char *file)
 
 	line = alloc_file_info(map, file);
 	if (line == -1)
-		return (-1);
+		return (err_msg("empty file"), -1);
 	if (fill_file_info(map, file) == -1)
 		return (-1);
 	map->file_lines = line;
