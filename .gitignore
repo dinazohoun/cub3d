@@ -1,0 +1,16 @@
+# Compilation
+*.o
+*.a
+objs/
+cub3D
+
+# MiniLibX (fichiers générés par configure)
+minilibx-linux/obj/
+minilibx-linux/makefile.gen
+minilibx-linux/test/makefile.gen
+
+# Scripts de test personnels
+*.sh
+
+# Éditeur
+.vscode/
