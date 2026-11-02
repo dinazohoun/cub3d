@@ -12,21 +12,6 @@
 
 #include "cub3d.h"
 
-void	print_map(t_map *map)
-{
-	int	y;
-
-	y = 0;
-	printf("map\n");
-	printf("h = %d, w = %d\n", map->map_h, map->map_w);
-	while (y < map->map_h)
-	{
-		printf("[%d] \"%s\"\n", y, map->map_arr[y]);
-		y++;
-	}
-	printf("end of map\n");
-}
-
 /*
 parse_cub_file(ressambler parse_bef_map et parse_map)
 */
@@ -42,7 +27,6 @@ int	parse_file(t_map *map)
 	if (parse_map(map, map_start) == -1)
 		return (free_textures(&data), -1);
 	cpy_texcol_to_map(map, &data);
-	print_map(map);
 	return (0);
 }
 
@@ -50,7 +34,6 @@ int	main(int ac, char **av)
 {
 	t_map	map;
 
-	(void) av;
 	ft_memset(&map, 0, sizeof(t_map));
 	if (ac != 2)
 		return (err_msg("wrong number of args"), -1);
