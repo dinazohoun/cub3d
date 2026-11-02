@@ -85,6 +85,7 @@ typedef struct s_wall
 {
 	double	wall_x;
 	double	angle;
+	double 	player_angle;
 	int		side;
 	int		x;
 	int		draw_start;

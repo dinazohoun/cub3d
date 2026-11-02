@@ -33,17 +33,19 @@ static void	apply_clipping(int wall_start, int wall_end, t_wall *wall)
 static void	setup_wall(t_wall *wall, t_dda *dda, double angle, int col)
 {
 	double	dir[2];
+	double ray_dist;
 	double	perp_dist;
 
 	dir[0] = cos(angle);
 	dir[1] = sin(angle);
-	perp_dist = calcul_perpen_distance_dda(dda, wall->ray_start, dir);
+	ray_dist = calcul_perpen_distance_dda(dda, wall->ray_start, dir);
+	perp_dist = ray_dist * cos(angle - wall->player_angle);
 	wall->line_height = calcul_wall_project(perp_dist,
 			&wall->wall_start, &wall->wall_end);
 	wall->x = col;
 	wall->side = get_wall_side_dda(dda, dir);
 	wall->dda_side = dda->side;
-	wall->wall_x = calculate_wall_x_dda(dda, wall->ray_start, perp_dist, dir);
+	wall->wall_x = calculate_wall_x_dda(dda, wall->ray_start, ray_dist, dir);
 	wall->angle = angle;
 	apply_clipping(wall->wall_start, wall->wall_end, wall);
 }
@@ -62,6 +64,7 @@ void	draw_one_ray(t_map *map, double ray_st[2], double angle, int col)
 
 	wall.ray_start[0] = ray_st[0];
 	wall.ray_start[1] = ray_st[1];
+	wall.player_angle = map->player.angle;
 	cast_ray_dda(map, ray_st, angle, &dda);
 	setup_wall(&wall, &dda, angle, col);
 	draw_textured_wall(map, &wall);
